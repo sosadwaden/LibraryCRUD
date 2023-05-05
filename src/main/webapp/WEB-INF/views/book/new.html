@@ -8,7 +8,7 @@
 
 <form th:method="POST" th:action="@{/book}" th:object="${book}">
 
-  <label for="title">Введите имя книги: </label>
+  <label for="title">Введите название книги: </label>
   <input type="text" th:field="*{title}" id="title"/>
   <br/>
 
@@ -20,7 +20,7 @@
   <input type="text" th:field="*{year}" id="year"/>
   <br/>
 
-  <input type="submit" value="Create!"/>
+  <input type="submit" value="Создать!"/>
 
 </form>
 
