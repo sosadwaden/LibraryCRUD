@@ -6,13 +6,16 @@ public class Person {
 
     private String full_name;
 
-    private String year_of_birth;
+    private int year_of_birth;
 
+    /**
+     * Пустой конструктор для Spring
+     */
     public Person() {
 
     }
 
-    public Person(int id, String full_name, String year_of_birth) {
+    public Person(int id, String full_name, int year_of_birth) {
         this.id = id;
         this.full_name = full_name;
         this.year_of_birth = year_of_birth;
@@ -34,11 +37,11 @@ public class Person {
         this.full_name = full_name;
     }
 
-    public String getYear_of_birth() {
+    public int getYear_of_birth() {
         return year_of_birth;
     }
 
-    public void setYear_of_birth(String year_of_birth) {
+    public void setYear_of_birth(int year_of_birth) {
         this.year_of_birth = year_of_birth;
     }
 
