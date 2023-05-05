@@ -15,8 +15,7 @@ public class Person {
 
     }
 
-    public Person(int id, String full_name, int year_of_birth) {
-        this.id = id;
+    public Person(String full_name, int year_of_birth) {
         this.full_name = full_name;
         this.year_of_birth = year_of_birth;
     }
