@@ -17,11 +17,13 @@ public class PeopleController {
 
     private final PersonDAO personDAO;
     private final PersonValidator personValidator;
+    private final BookController bookController;
 
     @Autowired
-    public PeopleController(PersonDAO personDAO, PersonValidator personValidator) {
+    public PeopleController(PersonDAO personDAO, PersonValidator personValidator, BookController bookController) {
         this.personDAO = personDAO;
         this.personValidator = personValidator;
+        this.bookController = bookController;
     }
 
     @GetMapping()
