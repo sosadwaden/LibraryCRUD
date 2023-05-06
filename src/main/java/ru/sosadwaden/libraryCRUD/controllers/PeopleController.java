@@ -7,6 +7,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.sosadwaden.libraryCRUD.dao.PersonDAO;
 import ru.sosadwaden.libraryCRUD.models.Person;
+import ru.sosadwaden.libraryCRUD.util.PersonValidator;
 
 import javax.validation.Valid;
 
@@ -15,10 +16,12 @@ import javax.validation.Valid;
 public class PeopleController {
 
     private final PersonDAO personDAO;
+    private final PersonValidator personValidator;
 
     @Autowired
-    public PeopleController(PersonDAO personDAO) {
+    public PeopleController(PersonDAO personDAO, PersonValidator personValidator) {
         this.personDAO = personDAO;
+        this.personValidator = personValidator;
     }
 
     @GetMapping()
@@ -28,9 +31,9 @@ public class PeopleController {
     }
 
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id,
-                       Model model) {
+    public String show(@PathVariable("id") int id, Model model) {
 
+        model.addAttribute("book", personDAO.getBooksByPersonId(id));
         model.addAttribute("person", personDAO.show(id));
         return "people/show";
 
@@ -42,8 +45,14 @@ public class PeopleController {
     }
 
     @PostMapping
-    public String create(@ModelAttribute("person") Person person,
+    public String create(@ModelAttribute("person") @Valid Person person,
                          BindingResult bindingResult) {
+
+        personValidator.validate(person, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            return "people/new";
+        }
 
         personDAO.save(person);
         return "redirect:/people";
@@ -60,6 +69,12 @@ public class PeopleController {
                          BindingResult bindingResult,
                          @PathVariable("id") int id) {
 
+        personValidator.validate(person, bindingResult);
+
+        if (bindingResult.hasErrors()) {
+            return "people/edit";
+        }
+
         personDAO.update(id, person);
         return "redirect:/people";
     }
@@ -69,5 +84,4 @@ public class PeopleController {
         personDAO.delete(id);
         return "redirect:/people";
     }
-
 }

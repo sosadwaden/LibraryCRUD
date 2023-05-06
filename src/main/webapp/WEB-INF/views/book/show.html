@@ -6,11 +6,32 @@
 </head>
 <body>
 
-<p th:text="${book.getTitle()}">TEXT</p>
-<p th:text="${book.getAuthor()}">TEXT</p>
-<p th:text="${book.getYear()}">TEXT</p>
+<p th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getYear()}">TEXT</p>
 
-<a th:href="@{/book/{id}/edit(id=${book.getId()})}">Изменить</a>
+<div th:if="${owner}">
+  <span>Книга сейчас у: </span> <span th:text="${owner.getFull_name()}">Person Name</span>
+
+  <form th:method="PATCH" th:action="@{/book/{id}/release(id=${book.getId()})}">
+    <input type="submit" value="Освободить книгу"/>
+  </form>
+</div>
+
+<div th:if="${people}">
+  <span>Эта книга свободна. Кому ее назначить?</span>
+  <form th:method="PATCH" th:action="@{/book/{id}/assign(id=${book.getId()})}">
+    <label for="person">Выберите человека</label>
+    <select th:object="${person}" th:field="*{id}" id="person">
+      <option th:each="person : ${people}" th:value="${person.getId()}" th:text="${person.getFull_name()}">
+      </option>
+    </select>
+    <input type="submit" value="Назначить книгу"/>
+  </form>
+
+</div>
+
+<form th:method="GET" th:action="@{/book/{id}/edit(id=${book.getId()})}">
+  <input type="submit" value="Редактировать"/>
+</form>
 
 <form th:method="DELETE" th:action="@{/book/{id}(id=${book.getId()})}">
   <input type="submit" value="Delete"/>

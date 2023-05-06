@@ -6,18 +6,23 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.sosadwaden.libraryCRUD.dao.BookDAO;
+import ru.sosadwaden.libraryCRUD.dao.PersonDAO;
 import ru.sosadwaden.libraryCRUD.models.Book;
 import ru.sosadwaden.libraryCRUD.models.Person;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/book")
 public class BookController {
 
     private final BookDAO bookDAO;
+    private final PersonDAO personDAO;
 
     @Autowired
-    public BookController(BookDAO bookDAO) {
+    public BookController(BookDAO bookDAO, PersonDAO personDAO) {
         this.bookDAO = bookDAO;
+        this.personDAO = personDAO;
     }
 
     @GetMapping()
@@ -27,9 +32,17 @@ public class BookController {
     }
 
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id,
-                       Model model) {
+    public String show(@PathVariable("id") int id, Model model, @ModelAttribute("person") Person person) {
+
         model.addAttribute("book", bookDAO.show(id));
+        Optional<Person> bookOwner = bookDAO.getBookOwner(id);
+
+        if (bookOwner.isPresent()) {
+            model.addAttribute("owner", bookOwner.get());
+        } else {
+            model.addAttribute("people", personDAO.index());
+        }
+
         return "book/show";
     }
 
@@ -54,9 +67,7 @@ public class BookController {
     }
 
     @PatchMapping("/{id}")
-    public String update(@ModelAttribute("book") Book book,
-                         BindingResult bindingResult,
-                         @PathVariable("id") int id) {
+    public String update(@ModelAttribute("book") Book book, BindingResult bindingResult, @PathVariable("id") int id) {
 
         bookDAO.update(id, book);
         return "redirect:/book";
@@ -66,6 +77,30 @@ public class BookController {
     public String delete(@PathVariable("id") int id) {
         bookDAO.delete(id);
         return "redirect:/book";
+    }
+
+    /**
+     * Освобождает книгу при нажатии на кнопку
+     * @param id
+     * @return
+     */
+    @PatchMapping("/{id}/release")
+    public String release(@PathVariable("id") int id) {
+        bookDAO.release(id);
+        return "redirect:/book/" + id;
+    }
+
+    /**
+     * Назначает книгу человеку при нажатии на кнопку
+     * @param id
+     * @param selectedPerson
+     * @return
+     */
+    @PatchMapping("/{id}/assign")
+    public String assign(@PathVariable("id") int id, @ModelAttribute("person") Person selectedPerson) {
+        // У selectedPerson назчено только поле id, остальные поля - null
+        bookDAO.assign(id, selectedPerson);
+        return "redirect:/book/" + id;
     }
 
 }

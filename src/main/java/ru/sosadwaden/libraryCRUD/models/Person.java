@@ -1,11 +1,18 @@
 package ru.sosadwaden.libraryCRUD.models;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 public class Person {
 
     private int id;
 
+    @NotEmpty(message = "Имя не должно быть пустым")
+    @Size(min = 2, max = 100, message = "Имя должно быть от 2 до 100 символов длиной")
     private String full_name;
 
+    @Min(value = 1900, message = "Год рождения должен быть старше 1900")
     private int year_of_birth;
 
     /**
